@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useQueryState } from "nuqs";
 import { constructOpenInStudioURL } from "../utils";
 import { HumanInterrupt } from "@langchain/langgraph/prebuilt";
+import { useApiUrl } from "@/hooks/useDefaultApiValues";
 
 interface ThreadActionsViewProps {
   interrupt: HumanInterrupt;
@@ -81,7 +82,7 @@ export function ThreadActionsView({
   } = useInterruptedActions({
     interrupt,
   });
-  const [apiUrl] = useQueryState("apiUrl");
+  const [apiUrl] = useApiUrl();
 
   const handleOpenInStudio = () => {
     if (!apiUrl) {

@@ -2,13 +2,14 @@
 
 import "./markdown-styles.css";
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
-import { FC, memo, useState } from "react";
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { SyntaxHighlighter } from "@/components/thread/syntax-highlighter";
+import { CheckIcon, ChevronRightIcon, CopyIcon } from "lucide-react";
+import { FC, memo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 import { TooltipIconButton } from "@/components/thread/tooltip-icon-button";
 import { cn } from "@/lib/utils";
@@ -151,14 +152,25 @@ const defaultComponents: any = {
       {...props}
     />
   ),
-  table: ({ className, ...props }: { className?: string }) => (
-    <table
-      className={cn(
-        "my-5 w-full border-separate border-spacing-0 overflow-y-auto",
-        className,
-      )}
-      {...props}
-    />
+  table: ({
+    className,
+    children,
+    ...props
+  }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => (
+    <div className="max-w-3xl overflow-auto">
+      <table
+        className={cn(
+          "mt-4 border-separate border-spacing-0",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </table>
+    </div>
   ),
   th: ({ className, ...props }: { className?: string }) => (
     <th
@@ -241,6 +253,47 @@ const defaultComponents: any = {
       </code>
     );
   },
+  details: ({
+    className,
+    children,
+    ...props
+  }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <details
+        className={cn(
+          "rounded-lg border border-gray-200 bg-gray-50",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </details>
+    );
+  },
+  summary: ({
+    className,
+    children,
+    ...props
+  }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <summary
+        className={cn(
+          "flex cursor-pointer items-center font-medium hover:bg-gray-100",
+          className,
+        )}
+        {...props}
+      >
+        <ChevronRightIcon className="h-4 w-4 transition-transform duration-200" />
+        {children}
+      </summary>
+    );
+  },
 };
 
 const MarkdownTextImpl: FC<{ children: string }> = ({ children }) => {
@@ -248,7 +301,7 @@ const MarkdownTextImpl: FC<{ children: string }> = ({ children }) => {
     <div className="markdown-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeKatex]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={defaultComponents}
       >
         {children}

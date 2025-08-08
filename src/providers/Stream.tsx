@@ -24,6 +24,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
+import { useApiUrl, useAssistantId } from "@/hooks/useDefaultApiValues";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -138,12 +139,8 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
     process.env.NEXT_PUBLIC_ASSISTANT_ID;
 
   // Use URL params with env var fallbacks
-  const [apiUrl, setApiUrl] = useQueryState("apiUrl", {
-    defaultValue: envApiUrl || "",
-  });
-  const [assistantId, setAssistantId] = useQueryState("assistantId", {
-    defaultValue: envAssistantId || "",
-  });
+  const [apiUrl, setApiUrl] = useApiUrl();
+  const [assistantId, setAssistantId] = useAssistantId();
 
   // For API key, use localStorage with env var fallback
   const [apiKey, _setApiKey] = useState(() => {

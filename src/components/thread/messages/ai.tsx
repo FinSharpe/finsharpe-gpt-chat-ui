@@ -119,21 +119,21 @@ export function AssistantMessage({
   const threadInterrupt = thread.interrupt;
 
   const parentCheckpoint = meta?.firstSeenState?.parent_checkpoint;
-  const anthropicStreamedToolCalls = Array.isArray(content)
-    ? parseAnthropicStreamedToolCalls(content)
-    : undefined;
+  // const anthropicStreamedToolCalls = Array.isArray(content)
+  //   ? parseAnthropicStreamedToolCalls(content)
+  //   : undefined;
 
-  const hasToolCalls =
-    message &&
-    "tool_calls" in message &&
-    message.tool_calls &&
-    message.tool_calls.length > 0;
-  const toolCallsHaveContents =
-    hasToolCalls &&
-    message.tool_calls?.some(
-      (tc) => tc.args && Object.keys(tc.args).length > 0,
-    );
-  const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
+  // const hasToolCalls =
+  //   message &&
+  //   "tool_calls" in message &&
+  //   message.tool_calls &&
+  //   message.tool_calls.length > 0;
+  // const toolCallsHaveContents =
+  //   hasToolCalls &&
+  //   message.tool_calls?.some(
+  //     (tc) => tc.args && Object.keys(tc.args).length > 0,
+  //   );
+  // const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
   const isToolResult = message?.type === "tool";
 
   if (isToolResult && hideToolCalls) {
@@ -143,7 +143,7 @@ export function AssistantMessage({
   return (
     <div className="group mr-auto flex items-start gap-2">
       <div className="flex flex-col gap-2">
-        {isToolResult ? (
+        {isToolResult && (
           <>
             <ToolResult message={message} />
             <Interrupt
@@ -152,7 +152,8 @@ export function AssistantMessage({
               hasNoAIOrToolMessages={hasNoAIOrToolMessages}
             />
           </>
-        ) : (
+        )}
+        {!isToolResult && (
           <>
             {contentString.length > 0 && (
               <div className="py-1">
@@ -160,7 +161,7 @@ export function AssistantMessage({
               </div>
             )}
 
-            {!hideToolCalls && (
+            {/* {!hideToolCalls && (
               <>
                 {(hasToolCalls && toolCallsHaveContents && (
                   <ToolCalls toolCalls={message.tool_calls} />
@@ -172,7 +173,7 @@ export function AssistantMessage({
                     <ToolCalls toolCalls={message.tool_calls} />
                   ))}
               </>
-            )}
+            )} */}
 
             {message && (
               <CustomComponent
