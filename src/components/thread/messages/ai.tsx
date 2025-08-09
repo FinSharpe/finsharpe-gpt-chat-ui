@@ -1,19 +1,27 @@
-import { parsePartialJson } from "@langchain/core/output_parsers";
-import { useStreamContext } from "@/providers/Stream";
-import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
-import { getContentString } from "../utils";
-import { BranchSwitcher, CommandBar } from "./shared";
-import { MarkdownText } from "../markdown-text";
-import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
-import { cn } from "@/lib/utils";
-import { ToolCalls, ToolResult } from "./tool-calls";
-import { MessageContentComplex } from "@langchain/core/messages";
-import { Fragment } from "react/jsx-runtime";
 import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
+import { cn } from "@/lib/utils";
+import { useStreamContext } from "@/providers/Stream";
+import { MessageContentComplex } from "@langchain/core/messages";
+import { parsePartialJson } from "@langchain/core/output_parsers";
+import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
+import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
+import { parseAsBoolean, useQueryState } from "nuqs";
+import { Fragment } from "react/jsx-runtime";
 import { ThreadView } from "../agent-inbox";
-import { useQueryState, parseAsBoolean } from "nuqs";
-import { GenericInterruptView } from "./generic-interrupt";
 import { useArtifact } from "../artifact";
+import { MarkdownText } from "../markdown-text";
+import { getContentString } from "../utils";
+import { GenericInterruptView } from "./generic-interrupt";
+import { BranchSwitcher, CommandBar } from "./shared";
+import { ToolResult } from "./tool-calls";
+
+function WeatherComponent(props: { city?: string }) {
+  return <div className="bg-red-500">Weather for {props?.city}</div>;
+}
+
+const clientComponents = {
+  weather: WeatherComponent,
+};
 
 function CustomComponent({
   message,
@@ -37,6 +45,7 @@ function CustomComponent({
           stream={thread}
           message={customComponent}
           meta={{ ui: customComponent, artifact }}
+          components={clientComponents}
         />
       ))}
     </Fragment>
@@ -88,7 +97,9 @@ function Interrupt({
       !isAgentInboxInterruptSchema(interruptValue) &&
       isLastMessage ? (
         <GenericInterruptView interrupt={interruptValue} />
-      ) : null}
+      ) : (
+        <pre>{JSON.stringify(interruptValue, null, 2)}</pre>
+      )}
     </>
   );
 }
