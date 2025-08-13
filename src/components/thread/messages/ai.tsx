@@ -1,27 +1,19 @@
 import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
 import { cn } from "@/lib/utils";
-import { useStreamContext } from "@/providers/Stream";
+import { useStreamContext } from "@/providers/StreamContext";
 import { MessageContentComplex } from "@langchain/core/messages";
-import { parsePartialJson } from "@langchain/core/output_parsers";
 import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
-import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
+import { LoadExternalComponent, type UIMessage } from "@langchain/langgraph-sdk/react-ui";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { Fragment } from "react/jsx-runtime";
 import { ThreadView } from "../agent-inbox";
 import { useArtifact } from "../artifact";
 import { MarkdownText } from "../markdown-text";
 import { getContentString } from "../utils";
+import { ComponentRegistry } from "./component-registry/registry";
 import { GenericInterruptView } from "./generic-interrupt";
 import { BranchSwitcher, CommandBar } from "./shared";
 import { ToolResult } from "./tool-calls";
-
-function WeatherComponent(props: { city?: string }) {
-  return <div className="bg-red-500">Weather for {props?.city}</div>;
-}
-
-const clientComponents = {
-  weather: WeatherComponent,
-};
 
 function CustomComponent({
   message,
@@ -32,20 +24,20 @@ function CustomComponent({
 }) {
   const artifact = useArtifact();
   const { values } = useStreamContext();
-  const customComponents = values.ui?.filter(
-    (ui) => ui.metadata?.message_id === message.id,
+  const customComponents = (values.ui as UIMessage[] | undefined)?.filter(
+    (uiItem: UIMessage) => uiItem.metadata?.message_id === message.id,
   );
 
   if (!customComponents?.length) return null;
   return (
     <Fragment key={message.id}>
-      {customComponents.map((customComponent) => (
+      {customComponents.map((customComponent: UIMessage) => (
         <LoadExternalComponent
           key={customComponent.id}
           stream={thread}
           message={customComponent}
           meta={{ ui: customComponent, artifact }}
-          components={clientComponents}
+          components={ComponentRegistry as any}
         />
       ))}
     </Fragment>
@@ -124,7 +116,7 @@ export function AssistantMessage({
   const isLastMessage =
     thread.messages[thread.messages.length - 1].id === message?.id;
   const hasNoAIOrToolMessages = !thread.messages.find(
-    (m) => m.type === "ai" || m.type === "tool",
+    (m: Message) => m.type === "ai" || m.type === "tool",
   );
   const meta = message ? thread.getMessagesMetadata(message) : undefined;
   const threadInterrupt = thread.interrupt;

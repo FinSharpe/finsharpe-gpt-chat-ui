@@ -5,7 +5,7 @@ import {
   ensureToolCallsHaveResponses,
 } from "@/lib/ensure-tool-responses";
 import { cn } from "@/lib/utils";
-import { useStreamContext } from "@/providers/Stream";
+import { useStreamContext } from "@/providers/StreamContext";
 import { Checkpoint, Message } from "@langchain/langgraph-sdk";
 import { motion } from "framer-motion";
 import {

@@ -1,8 +1,5 @@
 import { AIMessage, ToolMessage } from "@langchain/langgraph-sdk";
-import { AnimatePresence, motion } from "framer-motion";
 import { ComponentRegistry } from "./component-registry/registry";
-import { ChevronRightIcon } from "lucide-react";
-import { MarkdownText } from "../markdown-text";
 
 function isComplexValue(value: any): boolean {
   return Array.isArray(value) || (typeof value === "object" && value !== null);
@@ -90,58 +87,11 @@ export function ToolResult({ message }: { message: ToolMessage }) {
   if (!shouldRenderRegisteredComponent) return null;
 
   return (
-    <div className="mx-auto grid min-w-[calc(100dvw-2rem)] grid-rows-[1fr_auto] gap-2 md:min-w-3xl">
-      <div className="overflow-hidden rounded-lg border border-gray-200">
-        <div className="border-b border-gray-200 bg-gray-50 px-4 py-2">
-          <h3 className="font-medium text-gray-900">
-            {parsedContent?.props?.title}
-          </h3>
-        </div>
-        <motion.div
-          className="bg-gray-100"
-          initial={false}
-          animate={{ height: "auto" }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="p-3">
-            <AnimatePresence
-              mode="wait"
-              initial={false}
-            >
-              {shouldRenderRegisteredComponent &&
-                (() => {
-                  const Component =
-                    ComponentRegistry[
-                      parsedContent.name as keyof typeof ComponentRegistry
-                    ];
-                  return <Component {...parsedContent.props} />;
-                })()}
-            </AnimatePresence>
-          </div>
-          {/* Description */}
-          {parsedContent?.props?.description && (
-            <div className="border-t border-gray-200 p-3">
-              <p className="text-sm text-gray-500">
-                {parsedContent?.props?.description}
-              </p>
-            </div>
-          )}
-          {/* Analysis */}
-          {parsedContent?.props?.analysis && (
-            <div className="markdown-content">
-              <details className="!m-0 rounded-lg border border-gray-200 bg-gray-50">
-                <summary className="flex cursor-pointer items-center font-medium hover:bg-gray-100">
-                  <ChevronRightIcon className="h-4 w-4 transition-transform duration-200" />
-                  Analysis
-                </summary>
-                <div className="p-3">
-                  <MarkdownText>{parsedContent?.props?.analysis}</MarkdownText>
-                </div>
-              </details>
-            </div>
-          )}
-        </motion.div>
-      </div>
-    </div>
+    shouldRenderRegisteredComponent &&
+    (() => {
+      const Component =
+        ComponentRegistry[parsedContent.name as keyof typeof ComponentRegistry];
+      return <Component {...parsedContent.props} />;
+    })()
   );
 }

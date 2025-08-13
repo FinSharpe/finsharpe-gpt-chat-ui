@@ -1,30 +1,25 @@
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  useEffect,
-} from "react";
-import { useStream } from "@langchain/langgraph-sdk/react";
-import { type Message } from "@langchain/langgraph-sdk";
-import {
-  uiMessageReducer,
-  isUIMessage,
-  isRemoveUIMessage,
-  type UIMessage,
-  type RemoveUIMessage,
-} from "@langchain/langgraph-sdk/react-ui";
-import { useQueryState } from "nuqs";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { LangGraphLogoSVG } from "@/components/icons/langgraph";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight } from "lucide-react";
 import { PasswordInput } from "@/components/ui/password-input";
-import { getApiKey } from "@/lib/api-key";
-import { useThreads } from "./Thread";
-import { toast } from "sonner";
 import { useApiUrl, useAssistantId } from "@/hooks/useDefaultApiValues";
+import { getApiKey } from "@/lib/api-key";
+import { type Message } from "@langchain/langgraph-sdk";
+import { useStream } from "@langchain/langgraph-sdk/react";
+import {
+  isRemoveUIMessage,
+  isUIMessage,
+  uiMessageReducer,
+  type RemoveUIMessage,
+  type UIMessage,
+} from "@langchain/langgraph-sdk/react-ui";
+import { ArrowRight } from "lucide-react";
+import { useQueryState } from "nuqs";
+import React, { ReactNode, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { StreamContext } from "./StreamContext";
+import { useThreads } from "./Thread";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -40,8 +35,6 @@ const useTypedStream = useStream<
   }
 >;
 
-type StreamContextType = ReturnType<typeof useTypedStream>;
-const StreamContext = createContext<StreamContextType | undefined>(undefined);
 
 async function sleep(ms = 4000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -270,13 +263,4 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
-// Create a custom hook to use the context
-export const useStreamContext = (): StreamContextType => {
-  const context = useContext(StreamContext);
-  if (context === undefined) {
-    throw new Error("useStreamContext must be used within a StreamProvider");
-  }
-  return context;
-};
-
-export default StreamContext;
+export default StreamProvider;
