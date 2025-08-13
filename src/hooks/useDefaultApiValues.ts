@@ -1,5 +1,5 @@
 "use client";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 
 export function useAssistantId() {
   return useQueryState(
@@ -13,4 +13,8 @@ export function useApiUrl() {
     "apiUrl",
     parseAsString.withDefault(process.env.NEXT_PUBLIC_API_URL ?? ""),
   );
+}
+
+export function useHideToolCalls() {
+  return useQueryState("hideToolCalls", parseAsBoolean.withDefault(false));
 }

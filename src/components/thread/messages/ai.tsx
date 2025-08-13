@@ -1,3 +1,4 @@
+import { useHideToolCalls } from "@/hooks/useDefaultApiValues";
 import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
 import { cn } from "@/lib/utils";
 import { useStreamContext } from "@/providers/StreamContext";
@@ -5,7 +6,6 @@ import { MessageContentComplex } from "@langchain/core/messages";
 import { parsePartialJson } from "@langchain/core/output_parsers";
 import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
 import { LoadExternalComponent, type UIMessage } from "@langchain/langgraph-sdk/react-ui";
-import { parseAsBoolean, useQueryState } from "nuqs";
 import { Fragment } from "react/jsx-runtime";
 import { ThreadView } from "../agent-inbox";
 import { useArtifact } from "../artifact";
@@ -14,7 +14,7 @@ import { getContentString } from "../utils";
 import { ComponentRegistry } from "./component-registry/registry";
 import { GenericInterruptView } from "./generic-interrupt";
 import { BranchSwitcher, CommandBar } from "./shared";
-import { ToolResult } from "./tool-calls";
+import { ToolCalls, ToolResult } from "./tool-calls";
 
 function CustomComponent({
   message,
@@ -108,10 +108,7 @@ export function AssistantMessage({
 }) {
   const content = message?.content ?? [];
   const contentString = getContentString(content);
-  const [hideToolCalls] = useQueryState(
-    "hideToolCalls",
-    parseAsBoolean.withDefault(false),
-  );
+  const [hideToolCalls] = useHideToolCalls();
 
   const thread = useStreamContext();
   const isLastMessage =
@@ -123,26 +120,22 @@ export function AssistantMessage({
   const threadInterrupt = thread.interrupt;
 
   const parentCheckpoint = meta?.firstSeenState?.parent_checkpoint;
-  // const anthropicStreamedToolCalls = Array.isArray(content)
-  //   ? parseAnthropicStreamedToolCalls(content)
-  //   : undefined;
+  const anthropicStreamedToolCalls = Array.isArray(content)
+    ? parseAnthropicStreamedToolCalls(content)
+    : undefined;
 
-  // const hasToolCalls =
-  //   message &&
-  //   "tool_calls" in message &&
-  //   message.tool_calls &&
-  //   message.tool_calls.length > 0;
-  // const toolCallsHaveContents =
-  //   hasToolCalls &&
-  //   message.tool_calls?.some(
-  //     (tc) => tc.args && Object.keys(tc.args).length > 0,
-  //   );
-  // const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
+  const hasToolCalls =
+    message &&
+    "tool_calls" in message &&
+    message.tool_calls &&
+    message.tool_calls.length > 0;
+  const toolCallsHaveContents =
+    hasToolCalls &&
+    message.tool_calls?.some(
+      (tc) => tc.args && Object.keys(tc.args).length > 0,
+    );
+  const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
   const isToolResult = message?.type === "tool";
-
-  if (isToolResult && hideToolCalls) {
-    return null;
-  }
 
   return (
     <div className="group mr-auto flex items-start gap-2">
@@ -165,7 +158,7 @@ export function AssistantMessage({
               </div>
             )}
 
-            {/* {!hideToolCalls && (
+            {!hideToolCalls && (
               <>
                 {(hasToolCalls && toolCallsHaveContents && (
                   <ToolCalls toolCalls={message.tool_calls} />
@@ -177,7 +170,7 @@ export function AssistantMessage({
                     <ToolCalls toolCalls={message.tool_calls} />
                   ))}
               </>
-            )} */}
+            )}
 
             {message && (
               <CustomComponent
