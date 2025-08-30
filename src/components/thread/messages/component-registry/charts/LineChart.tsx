@@ -1,3 +1,4 @@
+"use client";
 import { MarkdownText } from "@/components/thread/markdown-text";
 import { AnimatePresence, motion } from "framer-motion";
 import { capitalize, startCase } from "lodash";
@@ -133,7 +134,7 @@ export default function LineChart({
           {/* Analysis */}
           {analysis && (
             <div className="markdown-content">
-              <details className="!m-0 rounded-lg border border-gray-200 bg-gray-50">
+              <details className="!m-0 rounded-lg border border-gray-200 bg-gray-50" open>
                 <summary className="flex cursor-pointer items-center font-medium hover:bg-gray-100">
                   <ChevronRightIcon className="h-4 w-4 transition-transform duration-200" />
                   Analysis

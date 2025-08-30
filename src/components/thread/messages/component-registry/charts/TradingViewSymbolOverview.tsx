@@ -1,9 +1,11 @@
+"use client";
 import React, { useEffect, useRef, memo } from "react";
 
-function TradingViewWidget({ symbol }: { symbol: string }) {
+function TradingViewWidget({ symbol }: { symbol?: string }) {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!symbol) return;
     const script = document.createElement("script");
     script.src =
       "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
@@ -56,6 +58,8 @@ function TradingViewWidget({ symbol }: { symbol: string }) {
         }`;
     container.current?.appendChild(script);
   }, [symbol]);
+
+  if (!symbol) return null;
 
   return (
     <div className="mx-auto min-h-[500px] max-w-[calc(100dvw-2rem)] md:max-w-3xl">

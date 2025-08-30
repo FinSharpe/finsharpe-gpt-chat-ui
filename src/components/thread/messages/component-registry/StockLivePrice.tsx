@@ -19,10 +19,12 @@ import { useYfLatestPrice } from "@/hooks/queries/use-yf-api";
 import Autoplay from "embla-carousel-autoplay";
 
 type Props = {
-  tickers: string[];
+  tickers?: string[];
 };
 
 export default function StockLivePrice({ tickers }: Props) {
+  if (!tickers) return null;
+
   return (
     <Carousel
       opts={{
