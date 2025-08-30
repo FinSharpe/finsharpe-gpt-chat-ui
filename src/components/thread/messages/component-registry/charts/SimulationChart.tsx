@@ -1,3 +1,4 @@
+"use client";
 import { MarkdownText } from "@/components/thread/markdown-text";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,12 +16,12 @@ import {
 } from "recharts";
 
 type Props = {
-  data: any;
-  args: any;
-  tool_call_id: string;
+  data?: any;
+  args?: any;
+  tool_call_id?: string;
   analysis?: string;
   report?: any;
-  labels_colors_map: Record<string, string>;
+  labels_colors_map?: Record<string, string>;
 };
 
 const MetricPill = ({
@@ -143,7 +144,13 @@ const CustomizedLegend = ({
 };
 
 const SimulationChart = React.memo(
-  function SimulationChart({ data, args, analysis, labels_colors_map, report }: Props) {
+  function SimulationChart({
+    data,
+    args,
+    analysis,
+    labels_colors_map,
+    report,
+  }: Props) {
     const [hoveredLegendKey, setHoveredLegendKey] = React.useState<
       string | null
     >(null);
@@ -159,7 +166,9 @@ const SimulationChart = React.memo(
           {/* Metrics Bar (outside chart) */}
           {args && (
             <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-white px-3 py-2">
-              <div className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] leading-none text-gray-600">Parameters</div>
+              <div className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] leading-none text-gray-600">
+                Parameters
+              </div>
               {typeof args.yearly_expected_return === "number" && (
                 <MetricPill
                   icon={"μ"}
@@ -175,22 +184,37 @@ const SimulationChart = React.memo(
                 />
               )}
               {args.symbol ? (
-                <MetricPill icon={"🏷"} label="Symbol" value={args.symbol} />
+                <MetricPill
+                  icon={"🏷"}
+                  label="Symbol"
+                  value={args.symbol}
+                />
               ) : null}
               {typeof args.initial_investment === "number" && (
                 <MetricPill
                   icon={"₹"}
                   label={args.symbol ? "Starting Price" : "Initial Investment"}
-                  value={`₹${Number(args.initial_investment).toLocaleString("en-IN", {
-                    maximumFractionDigits: 2,
-                  })}`}
+                  value={`₹${Number(args.initial_investment).toLocaleString(
+                    "en-IN",
+                    {
+                      maximumFractionDigits: 2,
+                    },
+                  )}`}
                 />
               )}
               {typeof args.simulations !== "undefined" && (
-                <MetricPill icon={"⚙"} label="Sims" value={String(args.simulations)} />
+                <MetricPill
+                  icon={"⚙"}
+                  label="Sims"
+                  value={String(args.simulations)}
+                />
               )}
               {typeof args.duration_years !== "undefined" && (
-                <MetricPill icon={"🗓"} label="Years" value={String(args.duration_years)} />
+                <MetricPill
+                  icon={"🗓"}
+                  label="Years"
+                  value={String(args.duration_years)}
+                />
               )}
               {/* {typeof args.trading_days_per_year !== "undefined" && (
                 <MetricPill
@@ -271,7 +295,7 @@ const SimulationChart = React.memo(
                       content={(props) => (
                         <ChartTooltip
                           {...props}
-                          labels_colors_map={labels_colors_map}
+                          labels_colors_map={labels_colors_map || {}}
                         />
                       )}
                     />
@@ -330,7 +354,7 @@ const SimulationChart = React.memo(
             {/* Analysis */}
             {analysis && (
               <div className="markdown-content">
-                <details className="!m-0 rounded-lg border border-gray-200 bg-gray-50">
+                <details className="!m-0 rounded-lg border border-gray-200 bg-gray-50" open>
                   <summary className="flex cursor-pointer items-center font-medium hover:bg-gray-100">
                     <ChevronRightIcon className="h-4 w-4 transition-transform duration-200" />
                     Analysis
@@ -345,7 +369,9 @@ const SimulationChart = React.memo(
           {/* Report Summary (outside chart) */}
           {report && (
             <div className="flex flex-wrap items-center gap-2 border-t border-gray-200 bg-white px-3 py-2">
-              <div className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] leading-none text-gray-600">Report</div>
+              <div className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] leading-none text-gray-600">
+                Report
+              </div>
               {[
                 "Best Final",
                 "Worst Final",
@@ -362,21 +388,21 @@ const SimulationChart = React.memo(
                       key === "Best Final"
                         ? "🏆"
                         : key === "Worst Final"
-                        ? "⚠"
-                        : key === "Median"
-                        ? "⎯"
-                        : key === "90th Percentile"
-                        ? "P90"
-                        : key === "75th Percentile"
-                        ? "P75"
-                        : key === "25th Percentile"
-                        ? "P25"
-                        : "P10"
+                          ? "⚠"
+                          : key === "Median"
+                            ? "⎯"
+                            : key === "90th Percentile"
+                              ? "P90"
+                              : key === "75th Percentile"
+                                ? "P75"
+                                : key === "25th Percentile"
+                                  ? "P25"
+                                  : "P10"
                     }
                     label={key}
                     value={formatINR(report[key] as number)}
                   />
-                ) : null
+                ) : null,
               )}
             </div>
           )}
