@@ -1,5 +1,6 @@
 "use client";
 import { MarkdownText } from "@/components/thread/markdown-text";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { AnimatePresence, motion } from "framer-motion";
 import { capitalize, startCase } from "lodash";
 import { ChevronRightIcon } from "lucide-react";
@@ -31,6 +32,7 @@ export default function LineChart({
   description,
   analysis,
 }: Props) {
+  const isMobile = useIsMobile();
   return (
     <div className="mx-auto grid min-w-[calc(100dvw-2rem)] grid-rows-[1fr_auto] gap-2 md:min-w-3xl">
       <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -57,7 +59,7 @@ export default function LineChart({
                   margin={{
                     top: 5,
                     right: 30,
-                    left: 30,
+                    left: isMobile ? -10 : 30,
                     bottom: 5,
                   }}
                 >
@@ -66,6 +68,7 @@ export default function LineChart({
                     tickFormatter={(value) => `${value.toFixed(2)}`}
                     domain={["dataMin", "dataMax"]}
                     unit="%"
+                    fontSize={isMobile ? 10 : 12}
                   />
                   <XAxis
                     dataKey="date"
@@ -78,6 +81,7 @@ export default function LineChart({
                       }).format(new Date(unixTime))
                     }
                     type="number"
+                    fontSize={isMobile ? 10 : 12}
                     tickMargin={6}
                     tickSize={12}
                   />
@@ -134,7 +138,10 @@ export default function LineChart({
           {/* Analysis */}
           {analysis && (
             <div className="markdown-content">
-              <details className="!m-0 rounded-lg border border-gray-200 bg-gray-50" open>
+              <details
+                className="!m-0 rounded-lg border border-gray-200 bg-gray-50"
+                open
+              >
                 <summary className="flex cursor-pointer items-center font-medium hover:bg-gray-100">
                   <ChevronRightIcon className="h-4 w-4 transition-transform duration-200" />
                   Analysis

@@ -114,6 +114,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+.max-w-chat-container {
+  max-width: calc(100dvw - 2rem);
+
+  @media (width >=48rem) {
+    max-width: var(--container-3xl);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

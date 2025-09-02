@@ -162,12 +162,9 @@ const defaultComponents: any = {
     className?: string;
     children: React.ReactNode;
   }) => (
-    <div className="max-w-3xl overflow-auto">
+    <div className="max-w-chat-container overflow-auto">
       <table
-        className={cn(
-          "mt-4 border-separate border-spacing-0",
-          className,
-        )}
+        className={cn("mt-4 border-separate border-spacing-0", className)}
         {...props}
       >
         {children}
@@ -302,7 +299,10 @@ const MarkdownTextImpl: FC<{ children: string }> = ({ children }) => {
   return (
     <div className="markdown-content">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
+        remarkPlugins={[
+          remarkGfm,
+          [remarkMath, { singleDollarTextMath: false }],
+        ]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={defaultComponents}
       >

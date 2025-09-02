@@ -62,7 +62,7 @@ function TradingViewWidget({ symbol }: { symbol?: string }) {
   if (!symbol) return null;
 
   return (
-    <div className="mx-auto min-h-[500px] max-w-[calc(100dvw-2rem)] md:max-w-3xl">
+    <div className="max-w-chat-container mx-auto min-h-[500px]">
       <div
         className="tradingview-widget-container"
         ref={container}

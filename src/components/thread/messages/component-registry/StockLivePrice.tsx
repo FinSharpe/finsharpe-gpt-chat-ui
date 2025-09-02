@@ -36,12 +36,12 @@ export default function StockLivePrice({ tickers }: Props) {
           delay: 2000,
         }),
       ]}
-      className="max-w-3xl"
+      className="max-w-chat-container"
     >
       <CarouselContent className="-ml-6">
         {tickers?.map((ticker) => (
           <CarouselItem
-            className="basis-1/2 pl-6"
+            className="md:basis-1/2 pl-6"
             key={ticker}
           >
             <StockCard ticker={ticker} />

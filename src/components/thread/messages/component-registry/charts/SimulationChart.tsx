@@ -1,5 +1,6 @@
 "use client";
 import { MarkdownText } from "@/components/thread/markdown-text";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRightIcon } from "lucide-react";
@@ -151,6 +152,7 @@ const SimulationChart = React.memo(
     labels_colors_map,
     report,
   }: Props) {
+    const isMobile = useIsMobile();
     const [hoveredLegendKey, setHoveredLegendKey] = React.useState<
       string | null
     >(null);
@@ -266,8 +268,8 @@ const SimulationChart = React.memo(
                     data={data}
                     margin={{
                       top: 5,
-                      right: 30,
-                      left: 10,
+                      right: isMobile ? 10 : 30,
+                      left: isMobile ? -15 : 10,
                       bottom: 5,
                     }}
                   >
@@ -276,6 +278,7 @@ const SimulationChart = React.memo(
                       tickFormatter={(value) => `${value.toFixed(0)}`}
                       domain={["dataMin", "dataMax"]}
                       unit="₹"
+                      fontSize={isMobile ? 10 : 12}
                     />
                     <XAxis
                       dataKey="date"
@@ -290,6 +293,7 @@ const SimulationChart = React.memo(
                       type="number"
                       tickMargin={6}
                       tickSize={12}
+                      fontSize={isMobile ? 10 : 12}
                     />
                     <Tooltip
                       content={(props) => (
